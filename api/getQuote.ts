@@ -1,26 +1,35 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 const quotes = require('../json/quotes.json');
 
-// 배너 설정 변수
-const bannerWidth = 820;
-const bannerHeight = 250;
-const gradientStartColor = '#807097';
-const gradientEndColor = '#647979';
-const titleColor = 'white';
-const titleFontSize = '24px';
-const titleFontFamily = "'Helvetica', sans-serif";
-const titleFontWeight = 'bold';
-const messageColor = 'white';
-const messageFontSize = '20px';
-const messageFontFamily = "'Arial', sans-serif";
-const messageFontWeight = 'normal'; // 'bold'로 변경 가능
+/* SVG 설정(SVG banner configuration) */
+const bannerWidth = 820; // Banner width (default: 820px, based on GitHub standard)
+const bannerHeight = 200; // Banner height
 
-export default function (res: Response) {
-  /* 랜덤 메시지 추출 */
+const gradientStartColor = '#555b6e'; // Gradient start color
+const gradientEndColor = '#6B7AA1'; // Gradient end color
+
+const titleColor = 'white'; // Title text color
+const titleFontSize = '36px'; // Title font size
+const titleFontFamily = "'Helvetica', sans-serif"; // Title font family
+const titleFontWeight = 'bold'; // Title font weight
+
+const messageColor = 'white'; // Message text color
+const messageFontSize = '20px'; // Message font size
+const messageFontFamily = "'Arial', sans-serif"; // Message font family
+const messageFontWeight = 'normal'; // Message font weight (can be changed to 'bold')
+
+const titleDy = '0'; // Title dy value (line height)
+const messageDy = '1.5em'; // First line of message dy value (line height)
+
+
+export default function (req: Request, res: Response) {
+  
+  const callbackUrl = req.query.callback as string | undefined;
+
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
-  /* svg 커스터마이징 */
+  /* SVG content */
   const svgContent = `
   <svg width="${bannerWidth}" height="${bannerHeight}" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -46,21 +55,24 @@ export default function (res: Response) {
     }
   </style>
   <rect width="100%" height="100%" fill="url(#backgroundGradient)" />
-  <text x="${bannerWidth / 2}" y="60" class="title">
-    <tspan x="${bannerWidth / 2}" dy="0">🔮${randomQuote.title}</tspan>
+  <text x="${bannerWidth / 2}" y="70" class="title">
+    <tspan x="${bannerWidth / 2}" dy="${titleDy}">🔮${randomQuote.title}</tspan>
   </text>
-  <text x="${bannerWidth / 2}" y="120" class="message">
-    <tspan x="${bannerWidth / 2}" dy="1.2em">💻${
+  <text x="${bannerWidth / 2}" y="100" class="message">
+    <tspan x="${bannerWidth / 2}" dy="${messageDy}">💻${
       randomQuote.message.split('\n')[0]
     }</tspan>
-    <tspan x="${bannerWidth / 2}" dy="1.2em">${
+    <tspan x="${bannerWidth / 2}" dy="${messageDy}">${
       randomQuote.message.split('\n')[1]
     }</tspan>
   </text>
 </svg>
   `;
 
-  /* 완성된 svg send */
-  res.setHeader('Content-Type', 'image/svg+xml');
-  res.status(200).send(svgContent);
+  if (callbackUrl) {
+    res.redirect(callbackUrl);
+  } else {
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.status(200).send(svgContent);
+  }
 }
