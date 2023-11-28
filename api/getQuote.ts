@@ -22,6 +22,9 @@ const messageFontWeight = 'normal'; // Message font weight (can be changed to 'b
 const titleDy = '0'; // Title dy value (line height)
 const messageDy = '1.5em'; // First line of message dy value (line height)
 
+const titleEmoji = '🔮'; // Emoji for Title
+const messageEmoji = '🖥️' // Emoji for Message
+
 
 export default function (req: Request, res: Response) {
   
@@ -56,10 +59,10 @@ export default function (req: Request, res: Response) {
   </style>
   <rect width="100%" height="100%" fill="url(#backgroundGradient)" />
   <text x="${bannerWidth / 2}" y="70" class="title">
-    <tspan x="${bannerWidth / 2}" dy="${titleDy}">🔮${randomQuote.title}</tspan>
+    <tspan x="${bannerWidth / 2}" dy="${titleDy}">${titleEmoji}${randomQuote.title}</tspan>
   </text>
   <text x="${bannerWidth / 2}" y="100" class="message">
-    <tspan x="${bannerWidth / 2}" dy="${messageDy}">💻${
+    <tspan x="${bannerWidth / 2}" dy="${messageDy}">${messageEmoji}${
       randomQuote.message.split('\n')[0]
     }</tspan>
     <tspan x="${bannerWidth / 2}" dy="${messageDy}">${
